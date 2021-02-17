@@ -41,10 +41,13 @@ begin
 end
 
 # ╔═╡ 47221b08-6e0c-11eb-0387-9bbc7d13ffea
-begin
-	num = 10000000
-	cards=1:52
-	array = [0,0,0,0,0,0]
+function simulateWithoutReplacement()
+	num = 1000000
+	cards=[]
+	for j in 1:52
+		push!(cards,j)
+	end
+	n = [0,0,0,0,0]
 	for i in 1:num
 		count=0
 		cards1= copy(cards)
@@ -55,9 +58,18 @@ begin
 				count+=1
 			end
 		end
-		array[count+1]+=1
+		n[count+1]+=1
 	end
-	array=array/num
+	return n=n/num
+end
+
+# ╔═╡ 3208716c-6f5e-11eb-0b77-89860f39aaf0
+emphricalValues=simulateWithoutReplacement()
+
+# ╔═╡ f6f09212-6f5d-11eb-01f2-07a8e1159f07
+begin
+	plot(0:4,emphricalValues,legend=false)
+	scatter!(0:4,emphricalValues,legend=false)
 end
 
 # ╔═╡ Cell order:
@@ -67,3 +79,5 @@ end
 # ╠═a50cf49c-6e16-11eb-3533-91f44c3e8e4f
 # ╠═0e87181a-6e14-11eb-3067-cbbebc8e5799
 # ╠═47221b08-6e0c-11eb-0387-9bbc7d13ffea
+# ╠═3208716c-6f5e-11eb-0b77-89860f39aaf0
+# ╠═f6f09212-6f5d-11eb-01f2-07a8e1159f07
