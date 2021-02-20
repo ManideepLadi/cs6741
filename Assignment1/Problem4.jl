@@ -42,7 +42,7 @@ function SimulateHacker()
 end
 
 # ╔═╡ d7504a14-6f9f-11eb-2b7b-c1c7c6cbab2c
-emphricalProbability=SimulateHacker()/1000000
+emphricalProbability=SimulateHacker()
 
 # ╔═╡ 93ed1386-7136-11eb-134b-e5640a65ee07
 md"Probability of a password gets stored in a database if at least two characters in the entered password are exactly the same (position and value) as the actual password is same as 1 minus probablity of no character match along with probability with 1 character match"
@@ -68,8 +68,11 @@ ProbablityOf0or1Match=PossibleOutcomes/TotalOutcomes
 # ╔═╡ 3563bd18-7138-11eb-18dc-4df3b3240b94
 theoriticalRequiredProbablity=1-ProbablityOf0or1Match
 
+# ╔═╡ 94503bae-7399-11eb-036a-452c8000b984
+noOfpasswordstored= theoriticalRequiredProbablity*1000000
+
 # ╔═╡ 5d2a8e62-7138-11eb-23a8-11d71877d95b
-md" The emphricalProbability is $emphricalProbability and theoritical probablity is $theoriticalRequiredProbablity"
+md" The emphrical calculation says it stores  $emphricalProbability whereas theoritical calculation says is $noOfpasswordstored"
 
 # ╔═╡ Cell order:
 # ╠═95894632-6f98-11eb-39eb-a91868aa4af1
@@ -81,9 +84,10 @@ md" The emphricalProbability is $emphricalProbability and theoritical probablity
 # ╟─93ed1386-7136-11eb-134b-e5640a65ee07
 # ╟─d00512ba-7136-11eb-0568-d19dc2e7ae8a
 # ╟─88afe1c8-7137-11eb-30bc-f5e5cb3672e6
-# ╟─b26b7c16-7137-11eb-3409-f5fde2969e03
-# ╠═7ed26bcc-7136-11eb-1a7d-f3456d537809
+# ╠═b26b7c16-7137-11eb-3409-f5fde2969e03
+# ╟─7ed26bcc-7136-11eb-1a7d-f3456d537809
 # ╠═04c5b74c-7138-11eb-2719-bba464c0171e
 # ╠═12ec3936-7138-11eb-1fff-4d4988219bdf
 # ╠═3563bd18-7138-11eb-18dc-4df3b3240b94
-# ╠═5d2a8e62-7138-11eb-23a8-11d71877d95b
+# ╠═94503bae-7399-11eb-036a-452c8000b984
+# ╟─5d2a8e62-7138-11eb-23a8-11d71877d95b
