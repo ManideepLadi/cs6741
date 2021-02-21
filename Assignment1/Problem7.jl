@@ -13,55 +13,6 @@ begin
 	pyplot()
 end
 
-# ╔═╡ 2deb1a0e-71bf-11eb-10df-0fc6d652db69
-function simulateStockmarket(prob)
-	num=100000
-	dict=Dict()
-	for i in 1:num
-		money=10
-		for j in 1:20
-			x=rand(1:100)
-			if x<=(prob)
-				money=money+1
-			else 
-				money=money-1
-			end
-		end
-		if get(dict,money,0)==0
-			dict[money]=1
-		else
-			dict[money]=dict[money]+1
-		end
-	end
-	for i in keys(dict) 
-    	dict[i]=dict[i]/num
-	end
-	probabiltyOfAtleast10=0
-	for i in keys(dict) 
-		if i>=10
-			probabiltyOfAtleast10=probabiltyOfAtleast10+dict[i]
-		end
-	end
-	return probabiltyOfAtleast10
-end
-
-# ╔═╡ 43257356-71bf-11eb-2a19-0ffac86b8cc0
-probabilityArray=[]
-
-# ╔═╡ 34758774-71bf-11eb-1985-b3d8274fe16d
-begin
-	empty!(probabilityArray)
-	for prob in 1:100
-		push!(probabilityArray,simulateStockmarket(prob))
-	end
-end
-
-# ╔═╡ 3475412c-71bf-11eb-0d7b-ed95a2a13bc0
-length(probabilityArray)
-
-# ╔═╡ 34751f70-71bf-11eb-0554-41d182ea1e51
-plot(1:100,probabilityArray)
-
 # ╔═╡ aa733fd4-71c4-11eb-2874-53d9fc9bf809
 function findBankruptcy(prob)
 	bankruptycount=0
@@ -84,19 +35,24 @@ function findBankruptcy(prob)
 	return bankruptycount/num
 end
 
-# ╔═╡ ceb79840-71c4-11eb-1149-77dbc3d0754d
-probabilityBankrupt=[]
-
 # ╔═╡ e39888fa-71c4-11eb-087f-cfb2069fb23a
-begin
+function simulation()
+	probabilityBankrupt=[]
 	empty!(probabilityBankrupt)
 	for prob in 1:100
 		push!(probabilityBankrupt,findBankruptcy(prob))
 	end
+	return probabilityBankrupt
 end
 
+# ╔═╡ e9cd36fc-7413-11eb-15bc-3f992e5aaeb0
+emphricalValues=simulation()
+
 # ╔═╡ 0d2aed20-71c5-11eb-2564-bf7946a7c4b0
-plot(1:100,probabilityBankrupt)
+begin
+	plot(1:100,emphricalValues, legend=false,xlabel="0.01p",ylabel="ProbabilityOfBankruptcy")
+	scatter!(1:100,emphricalValues,legend=false)
+end
 
 # ╔═╡ 3fcb3c4e-71c5-11eb-2d39-83d348ad0a1d
 function probabilityWithoutBankrupt(prob)
@@ -156,14 +112,9 @@ end
 # ╔═╡ Cell order:
 # ╠═a9236780-71bf-11eb-38c3-a12bd4edd2e4
 # ╠═bc2000dc-71bf-11eb-3df3-65ea4d51f300
-# ╠═2deb1a0e-71bf-11eb-10df-0fc6d652db69
-# ╠═43257356-71bf-11eb-2a19-0ffac86b8cc0
-# ╠═34758774-71bf-11eb-1985-b3d8274fe16d
-# ╠═3475412c-71bf-11eb-0d7b-ed95a2a13bc0
-# ╠═34751f70-71bf-11eb-0554-41d182ea1e51
 # ╠═aa733fd4-71c4-11eb-2874-53d9fc9bf809
-# ╠═ceb79840-71c4-11eb-1149-77dbc3d0754d
 # ╠═e39888fa-71c4-11eb-087f-cfb2069fb23a
+# ╠═e9cd36fc-7413-11eb-15bc-3f992e5aaeb0
 # ╠═0d2aed20-71c5-11eb-2564-bf7946a7c4b0
 # ╠═3fcb3c4e-71c5-11eb-2d39-83d348ad0a1d
 # ╠═89bbd05c-71c5-11eb-24c9-8d7baad6f192

@@ -4,40 +4,27 @@
 using Markdown
 using InteractiveUtils
 
-# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
-macro bind(def, element)
-    quote
-        local el = $(esc(element))
-        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : missing
-        el
-    end
-end
-
-# ╔═╡ cc870964-7068-11eb-1592-c76c21ca2b7f
+# ╔═╡ ba3fecd8-740e-11eb-220f-ff631294f43c
 using PlutoUI
 
-# ╔═╡ fcbe7f36-7068-11eb-2c7f-3165c9463fd5
+# ╔═╡ d77eb714-740e-11eb-20d0-29e37b575812
 begin
 	using Plots
 	pyplot()
 end
 
-# ╔═╡ 1dd135b4-706f-11eb-285f-f34490c66987
-@bind p html"<input type=range min=1 max=100>"
+# ╔═╡ 68287b72-7411-11eb-1a3a-8b04256bc228
+using Distributions
 
-# ╔═╡ aaa23fca-7070-11eb-2025-17dd9a57d353
-p
-
-# ╔═╡ 03efe128-706b-11eb-3886-bf3186be99af
-begin
+# ╔═╡ f14679d4-740e-11eb-0155-c54cdfef8a7e
+function stockMarket(prob)
 	num=100000
 	dict=Dict()
 	for i in 1:num
 		money=10
 		for j in 1:20
-			
 			x=rand(1:100)
-			if x<=(p)
+			if x<=(prob)
 				money=money+1
 			else 
 				money=money-1
@@ -51,133 +38,74 @@ begin
 	end
 	for i in keys(dict) 
     	dict[i]=dict[i]/num
-	end	
-end
-
-# ╔═╡ bb901a86-71bc-11eb-10fd-c36436ddd27a
-begin
+	end
 	probabiltyOfAtleast10=0
 	for i in keys(dict) 
 		if i>=10
 			probabiltyOfAtleast10=probabiltyOfAtleast10+dict[i]
 		end
 	end
+	return probabiltyOfAtleast10
 end
 
-# ╔═╡ 18b02104-71bd-11eb-2d36-e95d22444dce
-dict
-
-# ╔═╡ e5ea15e8-71bc-11eb-1c32-03450f4807be
-probabiltyOfAtleast10
-
-# ╔═╡ b1707b18-7074-11eb-1f6c-656160f4838d
-begin
-	x=[]
-	y=[]
-	empty!(x)
-	empty!(y)
-	for (i,j) in sort(collect(dict), by=x->x[1])
-		push!(x,i)
-		push!(y,j)
+# ╔═╡ fc29552e-740e-11eb-2def-f13816140a44
+function simulation()
+	probabilityArray=[]
+	empty!(probabilityArray)
+	for prob in 1:100
+		push!(probabilityArray,stockMarket(prob))
 	end
+	return probabilityArray
 end
 
-# ╔═╡ 1d1e4496-7073-11eb-13ef-258bf0c6908a
+# ╔═╡ 07946a7a-740f-11eb-1d80-771083cdf735
+emphricalProbabilites=simulation()
+
+# ╔═╡ 16e3adce-740f-11eb-38f4-f5b46562e64f
 begin
-	plot(x,y)
-	scatter!(x,y)
-	xlabel!("Money at the end of 20 tosses")
+	plot(1:100,emphricalProbabilites, legend=false,xlabel="0.01p",ylabel="ProbabilityOfAtleast10")
+	scatter!(1:100,emphricalProbabilites,legend=false)
 end
 
-# ╔═╡ a42ab562-7133-11eb-32ab-07c3a619afe8
-
-
-# ╔═╡ 75c4e6d6-71b8-11eb-0262-778299611952
-begin
-	bankruptycount=0
-	for i in 1:num
-		money=10
-		for j in 1:20
-			x=rand(1:100)
-			if x<=(p)
-				money=money+1
-			else 
-				money=money-1
-			end
-			if money<=0
-				bankruptycount=bankruptycount+1
-				break
-			end
-		end
+# ╔═╡ eb2c21c4-7411-11eb-070b-c1f79c81ac22
+function theoriticalStockMarket(p)
+	binomialDistribution=Distributions.Binomial(20,p/10)
+	theoriticalValues=pdf(binomialDistribution)
+	theoriticalProbability=0  
+	for i in 11:length(theoriticalValues)
+    	theoriticalProbability += theoriticalValues[i]
 	end
-	bankruptycount/num
+	return theoriticalProbability
 end
 
-# ╔═╡ 17361782-71ba-11eb-223e-83dbd66a8ad5
-begin
-	dict1=Dict()
-	for i in 1:num
-		money=10
-		isbankrupted=false
-		for j in 1:20
-			
-			x=rand(1:100)
-			if x<=(p)
-				money=money+1
-			else 
-				money=money-1
-			end
-			if money<=0
-				isbankrupted=true
-			end
-		end
-		if !isbankrupted
-				if get(dict1,money,0)==0
-					dict1[money]=1
-				else
-					dict1[money]=dict1[money]+1
-				end
-			end
+# ╔═╡ c5049032-7412-11eb-3564-7707b441300b
+function theoritical()
+	theoriticalprobabilityArray=[]
+	empty!(theoriticalprobabilityArray)
+	for prob in 1:10
+		push!(theoriticalprobabilityArray,theoriticalStockMarket(prob))
 	end
-	for i in keys(dict1) 
-    	dict1[i]=dict1[i]/num
-	end	
+	return theoriticalprobabilityArray
 end
 
-# ╔═╡ 2858be2e-71bd-11eb-2076-5518990d2896
-dict1
+# ╔═╡ 0ceb7280-7413-11eb-103d-d1887c106e0c
+theoreticalValues=theoritical()
 
-# ╔═╡ 178f9cce-71bc-11eb-23e5-cdd1b96c5aff
+# ╔═╡ 041bb7fa-7413-11eb-29fd-fd9eaa423c74
 begin
-	total=0
-	for i in keys(dict1)
-		if i>=10
-			total=total+dict1[i]
-		end
-	end
+	plot(1:10,theoreticalValues, legend=false,xlabel="0.1p",ylabel="ProbabilityOfAtleast10")
+	scatter!(1:10,theoreticalValues,legend=false)
 end
-
-# ╔═╡ 6b653caa-71bc-11eb-295b-9b72ce3a733a
-total
-
-# ╔═╡ a13f191c-71bd-11eb-3e7f-7dc95a53b60a
-total/(1-(bankruptycount/num))
 
 # ╔═╡ Cell order:
-# ╠═cc870964-7068-11eb-1592-c76c21ca2b7f
-# ╠═fcbe7f36-7068-11eb-2c7f-3165c9463fd5
-# ╠═1dd135b4-706f-11eb-285f-f34490c66987
-# ╠═aaa23fca-7070-11eb-2025-17dd9a57d353
-# ╠═03efe128-706b-11eb-3886-bf3186be99af
-# ╠═bb901a86-71bc-11eb-10fd-c36436ddd27a
-# ╠═18b02104-71bd-11eb-2d36-e95d22444dce
-# ╠═2858be2e-71bd-11eb-2076-5518990d2896
-# ╠═e5ea15e8-71bc-11eb-1c32-03450f4807be
-# ╠═b1707b18-7074-11eb-1f6c-656160f4838d
-# ╠═1d1e4496-7073-11eb-13ef-258bf0c6908a
-# ╠═a42ab562-7133-11eb-32ab-07c3a619afe8
-# ╠═75c4e6d6-71b8-11eb-0262-778299611952
-# ╠═17361782-71ba-11eb-223e-83dbd66a8ad5
-# ╠═178f9cce-71bc-11eb-23e5-cdd1b96c5aff
-# ╠═6b653caa-71bc-11eb-295b-9b72ce3a733a
-# ╠═a13f191c-71bd-11eb-3e7f-7dc95a53b60a
+# ╠═ba3fecd8-740e-11eb-220f-ff631294f43c
+# ╠═d77eb714-740e-11eb-20d0-29e37b575812
+# ╠═f14679d4-740e-11eb-0155-c54cdfef8a7e
+# ╠═fc29552e-740e-11eb-2def-f13816140a44
+# ╠═07946a7a-740f-11eb-1d80-771083cdf735
+# ╠═16e3adce-740f-11eb-38f4-f5b46562e64f
+# ╠═68287b72-7411-11eb-1a3a-8b04256bc228
+# ╠═eb2c21c4-7411-11eb-070b-c1f79c81ac22
+# ╠═c5049032-7412-11eb-3564-7707b441300b
+# ╠═0ceb7280-7413-11eb-103d-d1887c106e0c
+# ╠═041bb7fa-7413-11eb-29fd-fd9eaa423c74
